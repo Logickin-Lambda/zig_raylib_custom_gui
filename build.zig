@@ -37,6 +37,11 @@ const App = struct {
 // https://github.com/Not-Nik/raylib-zig/issues/24
 // https://github.com/raysan5/raylib/wiki/Working-for-Web-%28HTML5%29
 
+// To build the project by following the steps:
+// - create directory zig-out\web
+// - run command for web assembly:
+//     zig build -Dtarget=wasm32-emscripten --sysroot <emsdk installation path>\upstream\emscripten
+//   otherwise, use "zig build" to compile the defaults.
 pub fn build(b: *std.Build) void {
 
     // define the basic target information
