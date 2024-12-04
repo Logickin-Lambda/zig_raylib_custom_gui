@@ -83,14 +83,12 @@ pub fn build(b: *std.Build) void {
 
     // loading the dependencies of each libraries
     //
-    const raylib_dep = b.dependency("raylib-zig", .{
+    const raylib_dep = b.dependency("raylib", .{
         .target = actual_target,
         .optimize = raylib_optimize,
         .rmodels = false,
     });
 
-    const raylib = raylib_dep.module("raylib"); // main raylib module
-    const raygui = raylib_dep.module("raygui"); // raygui module
     const raylib_artifact = raylib_dep.artifact("raylib");
 
     // define the name and the source of the project
@@ -118,9 +116,7 @@ pub fn build(b: *std.Build) void {
         exe_lib.root_module.single_threaded = false;
 
         exe_lib.linkLibrary(raylib_artifact);
-        exe_lib.root_module.addImport("raylib", raylib);
-        exe_lib.root_module.addImport("raygui", raygui);
-        // exe_lib.addIncludePath(raylib_dep.path("src"));
+        exe_lib.addIncludePath(raylib_dep.path("src"));
 
         const sysroot_include = b.pathJoin(&.{ b.sysroot.?, "cache", "sysroot", "include" });
         var dir = std.fs.openDirAbsolute(sysroot_include, std.fs.Dir.OpenDirOptions{ .access_sub_paths = true, .no_follow = true }) catch @panic("No emscripten cache. Generate it!");
@@ -214,8 +210,6 @@ pub fn build(b: *std.Build) void {
         // addAssets(b, exe);
         exe.root_module.strip = strip;
         exe.linkLibrary(raylib_artifact);
-        exe.root_module.addImport("raylib", raylib);
-        exe.root_module.addImport("raygui", raygui);
 
         b.installArtifact(exe);
 
