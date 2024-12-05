@@ -90,6 +90,10 @@ pub fn build(b: *std.Build) void {
     });
 
     const raylib_artifact = raylib_dep.artifact("raylib");
+    // const raylib = @import("raylib");
+    // const raylib_artifact = try raylib.addRaylib(b, actual_target, raylib_optimize, .{
+    //     .raygui = true,
+    // });
 
     // define the name and the source of the project
     //
@@ -116,7 +120,7 @@ pub fn build(b: *std.Build) void {
         exe_lib.root_module.single_threaded = false;
 
         exe_lib.linkLibrary(raylib_artifact);
-        exe_lib.addIncludePath(raylib_dep.path("src"));
+        // exe_lib.addIncludePath(raylib_dep.path("src"));
 
         const sysroot_include = b.pathJoin(&.{ b.sysroot.?, "cache", "sysroot", "include" });
         var dir = std.fs.openDirAbsolute(sysroot_include, std.fs.Dir.OpenDirOptions{ .access_sub_paths = true, .no_follow = true }) catch @panic("No emscripten cache. Generate it!");

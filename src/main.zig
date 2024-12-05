@@ -1,5 +1,5 @@
 const std = @import("std");
-const rl = @import("raylib.zig").ray;
+const rl = @import("raylib.zig");
 
 pub fn main() !void {
     // Initialization
@@ -28,6 +28,5 @@ pub fn main() !void {
         rl.ClearBackground(rl.WHITE);
 
         rl.DrawText("<!--Skri-A Kaark--> ///Accipiter Nova Zor Se", 150, 200, 20, rl.LIGHTGRAY);
-        //----------------------------------------------------------------------------------
     }
 }
