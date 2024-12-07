@@ -66,9 +66,9 @@ var gui_font: rl.Font = undefined;
 // this is a lookup array for mapping the style of all elements, based on the number of controls.
 // Each control has a based index for their default idle style; if the style altered, it adds an additional
 // offset to the base to get other styles.
-const RAY_MAX_CONTROLS = @typeInfo(guiControl);
-const RAY_MAX_PROPS_BASE = @typeInfo(guiControlProperty);
-const RAY_MAX_PROPS_EXTENDED = @typeInfo(guiDefaultProperty);
+const RAY_MAX_CONTROLS = @typeInfo(guiControl).Enum.fields.len;
+const RAY_MAX_PROPS_BASE = @typeInfo(guiControlProperty).Enum.fields.len;
+const RAY_MAX_PROPS_EXTENDED = @typeInfo(guiDefaultProperty).Enum.fields.len;
 
 const RAY_MAX_LKUP_SIZE = RAY_MAX_CONTROLS * (RAY_MAX_PROPS_BASE + RAY_MAX_PROPS_EXTENDED);
 const gui_style_lkup: [RAY_MAX_LKUP_SIZE]u32 = std.mem.zeroes([RAY_MAX_LKUP_SIZE]u32);
