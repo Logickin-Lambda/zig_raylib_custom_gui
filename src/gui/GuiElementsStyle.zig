@@ -3,7 +3,7 @@ const rl = @import("../raylib.zig");
 
 // enum are the same in the original C implementation
 // which is not the key
-const guiControl = enum(u32) {
+pub const guiControl = enum(u32) {
     Default = 0,
     // Basic controls
     LABEL, // Used also for: LABELBUTTON
@@ -25,7 +25,7 @@ const guiControl = enum(u32) {
 
 // Gui base properties for every control
 // NOTE: RAYGUI_MAX_PROPS_BASE properties (by default 16 properties)
-const guiControlProperty = enum(u32) {
+pub const guiControlProperty = enum(u32) {
     BORDER_COLOR_NORMAL = 0,
     BASE_COLOR_NORMAL,
     TEXT_COLOR_NORMAL,
@@ -45,7 +45,7 @@ const guiControlProperty = enum(u32) {
     RESERVED,
 };
 
-const guiDefaultProperty = enum(u32) {
+pub const guiDefaultProperty = enum(u32) {
     TEXT_SIZE = 16, // Text size (glyphs max height)
     TEXT_SPACING, // Text spacing between glyphs
     LINE_COLOR, // Line control color
@@ -53,15 +53,23 @@ const guiDefaultProperty = enum(u32) {
 };
 
 // text alignment
-const guiTextAlignment = enum(u32) {
+pub const guiTextAlignment = enum(u32) {
     GUI_TEXT_ALIGN_LEFT = 0,
     GUI_TEXT_ALIGN_CENTER,
     GUI_TEXT_ALIGN_RIGHT,
 };
 
+pub const guiPropertyElement = enum(u32) {
+    BORDER = 0,
+    BASE,
+    TEXT,
+    OTHER,
+};
+
 // general gui lkup:
-var gui_style_loaded = false;
-var gui_font: rl.Font = undefined;
+pub var gui_style_loaded = false;
+pub var gui_font: rl.Font = undefined;
+pub const gui_alpha = 1.0;
 
 // this is a lookup array for mapping the style of all elements, based on the number of controls.
 // Each control has a based index for their default idle style; if the style altered, it adds an additional
@@ -71,7 +79,7 @@ const RAY_MAX_PROPS_BASE = @typeInfo(guiControlProperty).Enum.fields.len;
 const RAY_MAX_PROPS_EXTENDED = @typeInfo(guiDefaultProperty).Enum.fields.len;
 
 const RAY_MAX_LKUP_SIZE = RAY_MAX_CONTROLS * (RAY_MAX_PROPS_BASE + RAY_MAX_PROPS_EXTENDED);
-const gui_style_lkup: [RAY_MAX_LKUP_SIZE]u32 = std.mem.zeroes([RAY_MAX_LKUP_SIZE]u32);
+var gui_style_lkup: [RAY_MAX_LKUP_SIZE]u32 = std.mem.zeroes([RAY_MAX_LKUP_SIZE]u32);
 
 pub fn guiGetStyle(control: u32, property: u32) u32 {
     if (!gui_style_loaded) {
@@ -100,31 +108,31 @@ pub fn guiLoadStyleDefault() void {
     guiSetStyle(@intFromEnum(guiControl.Default), @intFromEnum(guiControlProperty.TEXT_COLOR_DISABLED), 0xaeb7b8ff);
     guiSetStyle(@intFromEnum(guiControl.Default), @intFromEnum(guiControlProperty.BORDER_WIDTH), 1);
     guiSetStyle(@intFromEnum(guiControl.Default), @intFromEnum(guiControlProperty.TEXT_PADDING), 0);
-    guiSetStyle(@intFromEnum(guiControl.Default), @intFromEnum(guiControlProperty.TEXT_ALIGNMENT), guiTextAlignment.GUI_TEXT_ALIGN_CENTER);
+    guiSetStyle(@intFromEnum(guiControl.Default), @intFromEnum(guiControlProperty.TEXT_ALIGNMENT), @intFromEnum(guiTextAlignment.GUI_TEXT_ALIGN_CENTER));
 
     // Initialize control-specific property values
     // NOTE: Those properties are in default list but require specific values by control type
-    guiSetStyle(guiControl.label, guiControlProperty.TEXT_ALIGNMENT, guiTextAlignment.GUI_TEXT_ALIGN_LEFT);
-    guiSetStyle(guiControl.BUTTON, guiControlProperty.BORDER_WIDTH, 2);
-    guiSetStyle(guiControl.SLIDER, guiControlProperty.TEXT_PADDING, 4);
-    guiSetStyle(guiControl.CHECKBOX, guiControlProperty.TEXT_PADDING, 4);
-    guiSetStyle(guiControl.CHECKBOX, guiControlProperty.TEXT_ALIGNMENT, guiTextAlignment.GUI_TEXT_ALIGN_RIGHT);
-    guiSetStyle(guiControl.TEXTBOX, guiControlProperty.TEXT_PADDING, 4);
-    guiSetStyle(guiControl.TEXTBOX, guiControlProperty.TEXT_ALIGNMENT, guiTextAlignment.GUI_TEXT_ALIGN_LEFT);
-    guiSetStyle(guiControl.VALUEBOX, guiControlProperty.TEXT_PADDING, 4);
-    guiSetStyle(guiControl.VALUEBOX, guiControlProperty.TEXT_ALIGNMENT, guiTextAlignment.GUI_TEXT_ALIGN_LEFT);
-    guiSetStyle(guiControl.SPINNER, guiControlProperty.TEXT_PADDING, 4);
-    guiSetStyle(guiControl.SPINNER, guiControlProperty.TEXT_ALIGNMENT, guiTextAlignment.GUI_TEXT_ALIGN_LEFT);
-    guiSetStyle(guiControl.STATUSBAR, guiControlProperty.TEXT_PADDING, 8);
-    guiSetStyle(guiControl.STATUSBAR, guiControlProperty.TEXT_ALIGNMENT, guiTextAlignment.GUI_TEXT_ALIGN_LEFT);
+    guiSetStyle(@intFromEnum(guiControl.LABEL), @intFromEnum(guiControlProperty.TEXT_ALIGNMENT), @intFromEnum(guiTextAlignment.GUI_TEXT_ALIGN_LEFT));
+    guiSetStyle(@intFromEnum(guiControl.BUTTON), @intFromEnum(guiControlProperty.BORDER_WIDTH), 2);
+    guiSetStyle(@intFromEnum(guiControl.SLIDER), @intFromEnum(guiControlProperty.TEXT_PADDING), 4);
+    guiSetStyle(@intFromEnum(guiControl.CHECKBOX), @intFromEnum(guiControlProperty.TEXT_PADDING), 4);
+    guiSetStyle(@intFromEnum(guiControl.CHECKBOX), @intFromEnum(guiControlProperty.TEXT_ALIGNMENT), @intFromEnum(guiTextAlignment.GUI_TEXT_ALIGN_RIGHT));
+    guiSetStyle(@intFromEnum(guiControl.TEXTBOX), @intFromEnum(guiControlProperty.TEXT_PADDING), 4);
+    guiSetStyle(@intFromEnum(guiControl.TEXTBOX), @intFromEnum(guiControlProperty.TEXT_ALIGNMENT), @intFromEnum(guiTextAlignment.GUI_TEXT_ALIGN_LEFT));
+    guiSetStyle(@intFromEnum(guiControl.VALUEBOX), @intFromEnum(guiControlProperty.TEXT_PADDING), 4);
+    guiSetStyle(@intFromEnum(guiControl.VALUEBOX), @intFromEnum(guiControlProperty.TEXT_ALIGNMENT), @intFromEnum(guiTextAlignment.GUI_TEXT_ALIGN_LEFT));
+    guiSetStyle(@intFromEnum(guiControl.SPINNER), @intFromEnum(guiControlProperty.TEXT_PADDING), 4);
+    guiSetStyle(@intFromEnum(guiControl.SPINNER), @intFromEnum(guiControlProperty.TEXT_ALIGNMENT), @intFromEnum(guiTextAlignment.GUI_TEXT_ALIGN_LEFT));
+    guiSetStyle(@intFromEnum(guiControl.STATUSBAR), @intFromEnum(guiControlProperty.TEXT_PADDING), 8);
+    guiSetStyle(@intFromEnum(guiControl.STATUSBAR), @intFromEnum(guiControlProperty.TEXT_ALIGNMENT), @intFromEnum(guiTextAlignment.GUI_TEXT_ALIGN_LEFT));
 
     // Initialize extended property values
     // NOTE: By default, extended property values are initialized to 0
     // For now, let's only focus on any components that I have
-    guiSetStyle(guiControl.Default, guiDefaultProperty.TEXT_SIZE, 10);
-    guiSetStyle(guiControl.Default, guiDefaultProperty.TEXT_SPACING, 1);
-    guiSetStyle(guiControl.Default, guiDefaultProperty.LINE_COLOR, 0x90abb5ff);
-    guiSetStyle(guiControl.Default, guiDefaultProperty.BACKGROUND_COLOR, 0xf5f5f5ff);
+    guiSetStyle(@intFromEnum(guiControl.Default), @intFromEnum(guiDefaultProperty.TEXT_SIZE), 10);
+    guiSetStyle(@intFromEnum(guiControl.Default), @intFromEnum(guiDefaultProperty.TEXT_SPACING), 1);
+    guiSetStyle(@intFromEnum(guiControl.Default), @intFromEnum(guiDefaultProperty.LINE_COLOR), 0x90abb5ff);
+    guiSetStyle(@intFromEnum(guiControl.Default), @intFromEnum(guiDefaultProperty.BACKGROUND_COLOR), 0xf5f5f5ff);
 
     gui_font = rl.GetFontDefault();
 }

@@ -1,5 +1,6 @@
 const std = @import("std");
 const rl = @import("raylib.zig");
+const gui = @import("gui/GuiElements.zig");
 
 const DisplayError = error{
     FrameTooSmall,
@@ -43,6 +44,10 @@ const BaseFrameInfo = struct {
             return @as(c_int, @intFromFloat(input * self.current_scale));
         }
     }
+
+    pub fn scale_float(self: *Self, input: anytype) f32 {
+        return @as(f32, @floatFromInt(input)) * self.current_scale;
+    }
 };
 
 pub fn main() !void {
@@ -84,7 +89,10 @@ pub fn main() !void {
         const text_dimension = rl.MeasureText(c_greeting_text, @as(c_int, 20));
 
         rl.DrawRectangle(scaling.scale(150), scaling.scale(200), scaling.scale(text_dimension), scaling.scale(20), rl.SKYBLUE);
-        rl.DrawText(c_greeting_text, scaling.scale(150), scaling.scale(200), scaling.scale(20), rl.LIGHTGRAY);
+        rl.DrawText(c_greeting_text, scaling.scale(150), scaling.scale(200), scaling.scale(20), rl.WHITE);
+
+        const rec = rl.Rectangle{ .x = scaling.scale_float(150), .y = scaling.scale_float(240), .height = scaling.scale_float(32), .width = scaling.scale_float(128) };
+        _ = gui.guiButton(rec, "Test");
 
         rl.EndDrawing();
     }
