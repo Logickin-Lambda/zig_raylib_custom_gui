@@ -29,8 +29,8 @@ const BaseFrameInfo = struct {
 
         if (width != self.current_width or height != self.current_height) {
             if (width > height) {
-                std.debug.print("width: {d}, height: {d}, ", .{ width, height });
-                std.debug.print("current width: {d}, current height: {d}\n", .{ self.frame_width, self.frame_height });
+                // std.debug.print("width: {d}, height: {d}, ", .{ width, height });
+                // std.debug.print("current width: {d}, current height: {d}\n", .{ self.frame_width, self.frame_height });
                 self.current_scale = @as(f32, @floatFromInt(height)) / @as(f32, @floatFromInt(self.frame_height));
             }
         }
@@ -38,11 +38,16 @@ const BaseFrameInfo = struct {
     }
 
     pub fn scale(self: *Self, input: anytype) c_int {
-        if (@TypeOf(input) == c_int) {
-            return @as(c_int, @intFromFloat(@as(f32, @floatFromInt(input)) * self.current_scale));
-        } else {
-            return @as(c_int, @intFromFloat(input * self.current_scale));
-        }
+        // if (@TypeOf(input) == c_int) {
+        //     return @as(c_int, @intFromFloat(@as(f32, @floatFromInt(input)) * self.current_scale));
+        // } else {
+        //     return @as(c_int, @intFromFloat(input * self.current_scale));
+        // }
+
+        return switch (@TypeOf(input)) {
+            c_int => @as(c_int, @intFromFloat(@as(f32, @floatFromInt(input)) * self.current_scale)),
+            else => @as(c_int, @intFromFloat(input * self.current_scale)),
+        };
     }
 
     pub fn scale_float(self: *Self, input: anytype) f32 {
@@ -69,6 +74,7 @@ pub fn main() !void {
 
     // Main game loop
     // var font_size: i64 = 10;
+    var sts_ind = false;
 
     while (!rl.WindowShouldClose()) { // Detect window close button or ESC key
         // Update
@@ -92,7 +98,20 @@ pub fn main() !void {
         rl.DrawText(c_greeting_text, scaling.scale(150), scaling.scale(200), scaling.scale(20), rl.WHITE);
 
         const rec = rl.Rectangle{ .x = scaling.scale_float(150), .y = scaling.scale_float(240), .height = scaling.scale_float(32), .width = scaling.scale_float(128) };
-        _ = gui.guiButton(rec, "Test");
+        const pressed = gui.guiButton(rec, "Test");
+
+        if (pressed) {
+            rl.DrawText("(???)", @intFromFloat(rec.x + rec.width * 1.5), @intFromFloat(rec.y), @intFromFloat(rec.height), rl.BLACK);
+        }
+
+        const rec_t = rl.Rectangle{ .x = scaling.scale_float(150), .y = scaling.scale_float(280), .height = scaling.scale_float(32), .width = scaling.scale_float(128) };
+        sts_ind = gui.guiToggle(rec_t, "Notey", &sts_ind);
+
+        if (sts_ind) {
+            rl.DrawText("(yep)", @intFromFloat(rec_t.x + rec_t.width * 1.5), @intFromFloat(rec_t.y), @intFromFloat(rec_t.height), rl.BLACK);
+        }
+
+        std.debug.print("sts_ind: {s}\n ", .{if (sts_ind) "true" else "false"});
 
         rl.EndDrawing();
     }

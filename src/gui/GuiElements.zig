@@ -54,6 +54,53 @@ pub fn guiButton(bounds: rl.Rectangle, text: [*c]const u8) bool {
     return pressed;
 }
 
+pub fn guiToggle(bounds: rl.Rectangle, text: [*c]const u8, active: *bool) bool {
+
+    // var for handling generic state
+    var state = gui_state;
+
+    // update control
+    if (state != GuiState.START_DISABLED and !gui_locked) {
+        const mouse_location = rl.GetMousePosition();
+
+        // check if the mouse cursor locates at the component
+        if (rl.CheckCollisionPointRec(mouse_location, bounds)) {
+            if (rl.IsMouseButtonDown(rl.MOUSE_BUTTON_LEFT)) {
+                std.debug.print("Pressed, ", .{});
+                state = GuiState.STATE_PRESSED;
+            } else if (rl.IsMouseButtonReleased(rl.MOUSE_BUTTON_LEFT)) {
+                std.debug.print("Flipped, ", .{});
+                state = GuiState.STATE_NORMAL;
+                active.* = !active.*;
+            } else {
+                std.debug.print("Default, ", .{});
+                state = GuiState.STATE_FOCUSED;
+            }
+        }
+    }
+
+    // render control
+    if (state == GuiState.STATE_NORMAL) {
+        std.debug.print("NORMAL State, ", .{});
+        const border_color = if (active.*) @intFromEnum(style.guiControlProperty.BORDER_COLOR_PRESSED) else (@intFromEnum(style.guiPropertyElement.BORDER) + @intFromEnum(state) * 3);
+        const center_color = if (active.*) @intFromEnum(style.guiControlProperty.BASE_COLOR_PRESSED) else (@intFromEnum(style.guiPropertyElement.BASE) + @intFromEnum(state) * 3);
+        const border_style = rl.Fade(rl.GetColor(style.guiGetStyle(@intFromEnum(style.guiControl.TOGGLE), border_color)), style.gui_alpha);
+        const center_style = rl.Fade(rl.GetColor(style.guiGetStyle(@intFromEnum(style.guiControl.TOGGLE), center_color)), style.gui_alpha);
+        guiDrawRectangle(bounds, @intCast(style.guiGetStyle(@as(u32, @intFromEnum(style.guiControl.TOGGLE)), @intFromEnum(style.guiControlProperty.BORDER_WIDTH))), border_style, center_style);
+    } else {
+        std.debug.print("NON-NORMAL State, ", .{});
+        const border_color = @intFromEnum(style.guiPropertyElement.BORDER) + @intFromEnum(state) * 3;
+        const center_color = @intFromEnum(style.guiPropertyElement.BASE) + @intFromEnum(state) * 3;
+        const border_style = rl.Fade(rl.GetColor(style.guiGetStyle(@intFromEnum(style.guiControl.TOGGLE), border_color)), style.gui_alpha);
+        const center_style = rl.Fade(rl.GetColor(style.guiGetStyle(@intFromEnum(style.guiControl.TOGGLE), center_color)), style.gui_alpha);
+        guiDrawRectangle(bounds, @intCast(style.guiGetStyle(@as(u32, @intFromEnum(style.guiControl.TOGGLE)), @intFromEnum(style.guiControlProperty.BORDER_WIDTH))), border_style, center_style);
+    }
+
+    rl.DrawText(text, @as(c_int, @intFromFloat(bounds.x + (bounds.x / 16))), @as(c_int, @intFromFloat(bounds.y)), @as(c_int, @intFromFloat(bounds.height)) - 2, rl.WHITE);
+
+    return active.*;
+}
+
 /// based on the source code of raygui, seems a bordered rectangle is actually made of 4 rectangles:
 /// The centre rectangle and the four rectangles for each sides of the centre on as the borders
 pub fn guiDrawRectangle(rec: rl.Rectangle, border_width: i32, border_color: rl.Color, color: rl.Color) void {
