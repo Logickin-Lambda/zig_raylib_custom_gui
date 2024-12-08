@@ -6,4 +6,4 @@ The first problem was the build system to emscripten. Since the 0.13.0 update, a
 
 In addition, even if I can load raygui into my project, some of the components are still missing for my planned applications; thus, I want to spend some time on learning how to properly build some custom components by reverse engineering the raygui library.
 
-Thus, **PLEASE DON'T USE THIS LIBRARY** because it is solely for **education purpose** and you should use the original [raygui library](https://github.com/gmh5225/gui-raygui) or their bindings instead.
+Thus, **PLEASE DON'T USE THIS LIBRARY** because it is solely for **education purpose** and you should use the original [raygui library](https://github.com/raysan5/raygui) or their bindings instead.
