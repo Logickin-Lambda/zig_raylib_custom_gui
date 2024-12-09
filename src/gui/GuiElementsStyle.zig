@@ -50,10 +50,22 @@ pub const guiDefaultProperty = enum(u32) {
     TEXT_SPACING, // Text spacing between glyphs
     LINE_COLOR, // Line control color
     BACKGROUND_COLOR, // Background color
+    TEXT_LINE_SPACING, // Text spacing between lines
+    TEXT_ALIGNMENT_VERTICAL, // Text vertical alignment inside text bounds (after border and padding)
+    TEXT_WRAP_MODE, // Text wrap-mode inside text bounds
+    //TEXT_DECORATION             // Text decoration: 0-None, 1-Underline, 2-Line-through, 3-Overline
+    //TEXT_DECORATION_THICK       // Text decoration line thickness
 };
 
 // text alignment
 pub const guiTextAlignment = enum(u32) {
+    GUI_TEXT_ALIGN_LEFT = 0,
+    GUI_TEXT_ALIGN_CENTER,
+    GUI_TEXT_ALIGN_RIGHT,
+};
+
+// text alignment
+pub const guiTextAlignmentVertical = enum(u32) {
     GUI_TEXT_ALIGN_LEFT = 0,
     GUI_TEXT_ALIGN_CENTER,
     GUI_TEXT_ALIGN_RIGHT,
@@ -85,6 +97,7 @@ pub fn guiGetStyle(control: u32, property: u32) u32 {
     if (!gui_style_loaded) {
         guiLoadStyleDefault();
     }
+
     return gui_style_lkup[control * (RAY_MAX_PROPS_BASE + RAY_MAX_PROPS_EXTENDED) + property];
 }
 

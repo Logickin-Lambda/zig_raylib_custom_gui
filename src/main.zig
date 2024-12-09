@@ -97,6 +97,7 @@ pub fn main() !void {
         rl.DrawRectangle(scaling.scale(150), scaling.scale(200), scaling.scale(text_dimension), scaling.scale(20), rl.SKYBLUE);
         rl.DrawText(c_greeting_text, scaling.scale(150), scaling.scale(200), scaling.scale(20), rl.WHITE);
 
+        // button element
         const rec = rl.Rectangle{ .x = scaling.scale_float(150), .y = scaling.scale_float(240), .height = scaling.scale_float(32), .width = scaling.scale_float(128) };
         const pressed = gui.guiButton(rec, "Test");
 
@@ -104,6 +105,7 @@ pub fn main() !void {
             rl.DrawText("(???)", @intFromFloat(rec.x + rec.width * 1.5), @intFromFloat(rec.y), @intFromFloat(rec.height), rl.BLACK);
         }
 
+        // toggle button element
         const rec_t = rl.Rectangle{ .x = scaling.scale_float(150), .y = scaling.scale_float(280), .height = scaling.scale_float(32), .width = scaling.scale_float(128) };
         sts_ind = gui.guiToggle(rec_t, "Notey", &sts_ind);
 
@@ -111,7 +113,7 @@ pub fn main() !void {
             rl.DrawText("(yep)", @intFromFloat(rec_t.x + rec_t.width * 1.5), @intFromFloat(rec_t.y), @intFromFloat(rec_t.height), rl.BLACK);
         }
 
-        std.debug.print("sts_ind: {s}\n ", .{if (sts_ind) "true" else "false"});
+        // std.debug.print("sts_ind: {s}\n ", .{if (sts_ind) "true" else "false"});
 
         rl.EndDrawing();
     }
