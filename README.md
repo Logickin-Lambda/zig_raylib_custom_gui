@@ -1,3 +1,6 @@
+# Updated!
+I have found a working solution for building the raygui into a web assembly project! This is huge because I no longer need to rewrite some of the basic components from sketch for my future project, but I will keep this project so that I can experiment around any custom component that is not included in the framework.
+
 # There is Raygui, but Why?
 
 This is definitely an odd choice why I decided to re-invent the wheel which consists of two reasons.
